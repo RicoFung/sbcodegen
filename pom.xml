@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>sbcodegen</groupId>
+	<artifactId>sbcodegen</artifactId>
+	<version>0.1</version>
+	<name>sbcodegen</name>
+	
+	<dependencies>
+	<!-- 代码生成工具 -->
+		<dependency>
+			<groupId>com.googlecode.rapid-framework</groupId>
+			<artifactId>rapid-generator</artifactId>
+			<version>4.0.6</version>
+		</dependency>
+
+		<!-- db driver myql-->
+		<dependency><groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><version>5.1.43</version></dependency>
+		<!-- db driver oracle-->
+		<dependency><groupId>com.sbapi</groupId><artifactId>sbapi</artifactId><version>0.1</version><scope>system</scope><systemPath>${project.basedir}/lib/ojdbc14.jar</systemPath></dependency>
+
+		<!-- freemarker -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.16</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.2.135</version>
+		</dependency>
+
+		<!-- 代码生成器扩展包 -->
+		<dependency>
+			<groupId>com.googlecode.rapid-framework</groupId>
+			<artifactId>rapid-generator-ext</artifactId>
+			<version>4.0.6</version>
+		</dependency>
+
+		<!-- 代码生成器模板,模板根目录通过 classpath:generator/template/rapid 可以引用 -->
+		<dependency>
+			<groupId>com.googlecode.rapid-framework</groupId>
+			<artifactId>rapid-generator-template</artifactId>
+			<version>4.0.6</version>
+		</dependency>
+	</dependencies>
+</project>
