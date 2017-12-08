@@ -11,7 +11,7 @@ import ${basepackage}.${subpackage}.entity.${className};
 @Repository
 public class ${className}Dao extends BaseDao<${className},Long>
 {
-	@Resource(name = "firstSqlSessionTemplate")
+	@Resource//(name = "firstSqlSessionTemplate")
 	private SqlSession sqlSession;
 
 	@Override
