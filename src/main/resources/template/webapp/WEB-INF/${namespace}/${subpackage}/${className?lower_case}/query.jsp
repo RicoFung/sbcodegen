@@ -111,10 +111,10 @@ $chok.view.query.callback.onLoadSuccess = function(){
 $chok.view.query.init.toolbar = function(){
 	$("#bar_btn_exp").click(function(){
 		$chok.view.query.fn.exp("exp.action", 
-				                "SYN_SAP_SALE_HD",
-				                "SYN_SAP_SALE_HD", 
-				                "<#list table.columns as column> ${column.underscoreName}<#if column_has_next>,</#if></#list>",
-				                "<#list table.columns as column> ${column.columnNameLower}<#if column_has_next>,</#if></#list>"
+				                "${table.sqlName}",
+				                "${table.sqlName}", 
+				                "<#list table.columns as column>${column.underscoreName}<#if column_has_next>,</#if></#list>",
+				                "<#list table.columns as column>${column.columnNameLower}<#if column_has_next>,</#if></#list>");
 	});
 };
 // OVERWRITE-表格第一二列
