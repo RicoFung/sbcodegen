@@ -15,9 +15,9 @@
     </insert>  
 	
 	<delete id="del" parameterType="${basepackage}.${subpackage}.entity.${className}">
-		delete from ${table.underscoreName}
+		delete from ${table.underscoreName} 
 		<#if table.pkCount gte 1>
-		 where <#list table.compositeIdColumns as column>${column.underscoreName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>	  
+		 where <#list table.compositeIdColumns as column>${column.underscoreName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>
 		</#if>
 	</delete>
 	
@@ -26,9 +26,9 @@
 	           <#list table.notPkColumns as column>
 	           ${column.underscoreName} = <@mapperEl column.columnNameFirstLower/><#if column_has_next>,</#if> 
 	           </#list>
-		<#if table.pkCount gte 1>
-         where <#list table.compositeIdColumns as column>${column.underscoreName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>	        
-		</#if>
+	     <#if table.pkCount gte 1>
+         where <#list table.compositeIdColumns as column>${column.underscoreName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>
+         </#if>        
 	</update>
   	
 	<resultMap type="${basepackage}.${subpackage}.entity.${className}" id="result">
@@ -49,6 +49,8 @@
 			<when test="@chok.devwork.Ognl@isNotEmpty(multiSort) and @chok.devwork.Ognl@isEmpty(sort)">
 				order by <foreach collection="multiSort" index="index" item="item" separator=",">tt.<include refid="orderParse2" /> ${r'${item.sortOrder}'}</foreach>  
 			</when>
+			<otherwise>
+			</otherwise>
 		</choose>
 	</sql>
 	<sql id="orderParse1">
@@ -60,10 +62,6 @@
 		<#list table.columns as column>
 		<if test="item.sortName == '${column.columnNameLower}'">${column.underscoreName}</if>
 		</#list>
-	</sql>
-	
-	<sql id="page">
-		<if test="@chok.devwork.Ognl@isNotEmpty(offset) and @chok.devwork.Ognl@isNotEmpty(limit)"> limit ${r'#{offset,javaType=String,jdbcType=NUMERIC}'}, ${r'#{limit,javaType=String,jdbcType=NUMERIC}'} </if>
 	</sql>
 	
 	<sql id="dynamicWhere">
@@ -84,13 +82,29 @@
 	</select>
 	
 	<select id="query" resultType="list" resultMap="result">
-		select tt.* from 
-		(
-			select <include refid="columns"/> from ${table.underscoreName} t
-			<include refid="dynamicWhere" />
-		) tt
-		<include refid="order" />
-		<include refid="page" />
+		<choose>
+			<!-- 翻页 -->
+			<when test="@chok.devwork.Ognl@isNotEmpty(offset) and @chok.devwork.Ognl@isNotEmpty(limit)">
+				select * from (select row_.*, rownum rownum_ from(
+					select tt.* from 
+					(
+						select <include refid="columns"/> from ${table.underscoreName} t
+						<include refid="dynamicWhere" />
+					) tt
+					<include refid="order" />
+	            ) row_ where rownum &lt;= ${r'#{offset,javaType=String,jdbcType=NUMERIC}'}+${r'#{limit,javaType=String,jdbcType=NUMERIC}'} ) 
+	            where rownum_ &gt; ${r'#{offset,javaType=String,jdbcType=NUMERIC}'}
+			</when>
+			<!-- 非翻页 -->
+			<otherwise>
+				select tt.* from 
+				(
+					select <include refid="columns"/> from ${table.underscoreName} t
+					<include refid="dynamicWhere" />
+				) tt
+				<include refid="order" />
+			</otherwise>
+		</choose>
 	</select>
 	
 	<select id="getCount" resultType="int">
