@@ -29,7 +29,7 @@ public class ${className}Action extends BaseController<${className}>
 	public String add() 
 	{
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/admin/${classNameLowerCase}/add.jsp";
+		return "/${subpackage}/${classNameLowerCase}/add.jsp";
 	}
 	@RequestMapping("/add2")
 	public void add2(${className} po) 
@@ -68,7 +68,7 @@ public class ${className}Action extends BaseController<${className}>
 	{
 		put("po", service.get(req.getLong("id")));
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/admin/${classNameLowerCase}/upd.jsp";
+		return "/${subpackage}/${classNameLowerCase}/upd.jsp";
 	}
 	@RequestMapping("/upd2")
 	public void upd2(${className} po) 
@@ -90,14 +90,14 @@ public class ${className}Action extends BaseController<${className}>
 	{
 		put("po",service.get(req.getLong("id")));
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/admin/${classNameLowerCase}/get.jsp";
+		return "/${subpackage}/${classNameLowerCase}/get.jsp";
 	}
 
 	@RequestMapping("/query")
 	public String query() 
 	{
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/admin/${classNameLowerCase}/query.jsp";
+		return "/${subpackage}/${classNameLowerCase}/query.jsp";
 	}
 	
 	@RequestMapping("/query2")
