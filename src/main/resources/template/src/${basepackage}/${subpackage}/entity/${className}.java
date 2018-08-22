@@ -1,7 +1,8 @@
 <#include "/macro.include"/>
 <#assign className = table.className>   
 <#assign classNameLower = className?uncap_first> 
-package ${basepackage}.${subpackage}.entity;
+<#assign subpkg = subpackage?replace("/",".")>
+package ${basepackage}.${subpkg}.entity;
 
 /**
 <#include "/java_description.include">

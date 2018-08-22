@@ -2,7 +2,8 @@
 <#assign classNameLower = className?uncap_first> 
 <#assign classNameLowerCase = table.classNameLowerCase>  
 <#assign classNameFirstLower = table.classNameFirstLower>  
-package ${basepackage}.${subpackage}.api;
+<#assign subpkg = subpackage?replace("/",".")>
+package ${basepackage}.${subpkg}.api;
 
 import java.util.List;
 import java.util.Map;
@@ -14,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import chok.devwork.BaseController;
 import chok.util.CollectionUtil;
-import ${basepackage}.${subpackage}.service.${className}Service;
-import ${basepackage}.${subpackage}.entity.${className};
+import ${basepackage}.${subpkg}.service.${className}Service;
+import ${basepackage}.${subpkg}.entity.${className};
 
 @Scope("prototype")
 @Controller
