@@ -1,12 +1,13 @@
 <#assign className = table.className>   
 <#assign classNameLower = className?uncap_first> 
-package ${basepackage}.${subpackage}.dao;
+<#assign subpkg = subpackage?replace("/",".")>
+package ${basepackage}.${subpkg}.dao;
 
 import javax.annotation.Resource;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 import chok.devwork.springboot.BaseDao;
-import ${basepackage}.${subpackage}.entity.${className};
+import ${basepackage}.${subpkg}.entity.${className};
 
 @Repository
 public class ${className}Dao extends BaseDao<${className},Long>

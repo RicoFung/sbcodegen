@@ -2,7 +2,8 @@
 <#assign classNameLower = className?uncap_first> 
 <#assign classNameLowerCase = table.classNameLowerCase>  
 <#assign classNameFirstLower = table.classNameFirstLower>  
-package ${basepackage}.${subpackage}.action;
+<#assign subpkg = subpackage?replace("/",".")>
+package ${basepackage}.${subpkg}.action;
 
 import java.util.List;
 import java.util.Map;
@@ -14,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import chok.devwork.BaseController;
 import chok.util.CollectionUtil;
-import ${basepackage}.${subpackage}.service.${className}Service;
-import ${basepackage}.${subpackage}.entity.${className};
+import ${basepackage}.${subpkg}.service.${className}Service;
+import ${basepackage}.${subpkg}.entity.${className};
 
 @Scope("prototype")
 @Controller
@@ -29,7 +30,7 @@ public class ${className}Action extends BaseController<${className}>
 	public String add() 
 	{
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/admin/${classNameLowerCase}/add.jsp";
+		return "/${subpackage}/${classNameLowerCase}/add.jsp";
 	}
 	@RequestMapping("/add2")
 	public void add2(${className} po) 
@@ -68,7 +69,7 @@ public class ${className}Action extends BaseController<${className}>
 	{
 		put("po", service.get(req.getLong("id")));
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/admin/${classNameLowerCase}/upd.jsp";
+		return "/${subpackage}/${classNameLowerCase}/upd.jsp";
 	}
 	@RequestMapping("/upd2")
 	public void upd2(${className} po) 
@@ -90,14 +91,14 @@ public class ${className}Action extends BaseController<${className}>
 	{
 		put("po",service.get(req.getLong("id")));
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/admin/${classNameLowerCase}/get.jsp";
+		return "/${subpackage}/${classNameLowerCase}/get.jsp";
 	}
 
 	@RequestMapping("/query")
 	public String query() 
 	{
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/admin/${classNameLowerCase}/query.jsp";
+		return "/${subpackage}/${classNameLowerCase}/query.jsp";
 	}
 	
 	@RequestMapping("/query2")

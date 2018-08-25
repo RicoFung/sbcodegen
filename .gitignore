@@ -1,1 +1,6 @@
 /target/
+<<<<<<< HEAD
+=======
+/generator-output/
+/.settings/
+>>>>>>> refs/remotes/origin/master
