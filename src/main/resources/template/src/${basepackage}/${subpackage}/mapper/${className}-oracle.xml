@@ -77,7 +77,7 @@
 		SELECT <include refid="columns"/> 
 		  FROM ${table.sqlName} t 
 		<#if table.pkCount gte 1>
-		 WHERE <#list table.compositeIdColumns as column>${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> AND </#if> </#list>	  
+		 WHERE <#list table.compositeIdColumns as column>t.${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> AND </#if> </#list>	  
 		</#if>
 	</select>
 	

@@ -3,7 +3,6 @@
 <#assign subpkg = subpackage?replace("/",".")>
 <?xml version="1.0" encoding="UTF-8"?>  
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">   
-
 <#macro mapperEl value>${r"#{"}${value}}</#macro>
 
 <mapper namespace="${basepackage}.${subpkg}.entity.${className}">
@@ -80,7 +79,7 @@
 		select <include refid="columns"/> 
 		  from ${table.underscoreName} t 
 		<#if table.pkCount gte 1>
-		 where <#list table.compositeIdColumns as column>${column.underscoreName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>	  
+		 where <#list table.compositeIdColumns as column>t.${column.underscoreName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>	  
 		</#if>
 	</select>
 	
