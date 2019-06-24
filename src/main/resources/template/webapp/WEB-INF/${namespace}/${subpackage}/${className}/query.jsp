@@ -64,8 +64,8 @@
 </form>
 <%@ include file="/include/view-end.jsp"%>
 <!-- ======================================================================================================= -->
-<script type="text/javascript" src="${r'${statics}'}/res/chok/js/chok.auth.js"></script>
-<script type="text/javascript" src="${r'${statics}'}/res/chok/js/chok.view.query.js"></script>
+<script type="text/javascript" src="${r'${staticexternal}'}/res/chok/js/chok.auth.js"></script>
+<script type="text/javascript" src="${r'${staticexternal}'}/res/chok/js/chok.view.query.js"></script>
 <script type="text/javascript">
 /**********************************************************/
 /* 全局函数 */

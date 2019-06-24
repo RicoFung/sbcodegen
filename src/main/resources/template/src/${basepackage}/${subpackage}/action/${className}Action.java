@@ -30,7 +30,8 @@ public class ${className}Action extends BaseController<${className}>
 	public String add() 
 	{
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/${subpackage}/${classNameLowerCase}/add.jsp";
+		put("jspaction", req.getServletPath());
+		return "jsp/${subpackage}/${classNameLowerCase}/add";
 	}
 	@RequestMapping("/add2")
 	public void add2(${className} po) 
@@ -69,7 +70,8 @@ public class ${className}Action extends BaseController<${className}>
 	{
 		put("po", service.get(req.getLong("id")));
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/${subpackage}/${classNameLowerCase}/upd.jsp";
+		put("jspaction", req.getServletPath());
+		return "jsp/${subpackage}/${classNameLowerCase}/upd";
 	}
 	@RequestMapping("/upd2")
 	public void upd2(${className} po) 
@@ -91,14 +93,16 @@ public class ${className}Action extends BaseController<${className}>
 	{
 		put("po",service.get(req.getLong("id")));
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/${subpackage}/${classNameLowerCase}/get.jsp";
+		put("jspaction", req.getServletPath());
+		return "jsp/${subpackage}/${classNameLowerCase}/get";
 	}
 
 	@RequestMapping("/query")
 	public String query() 
 	{
 		put("queryParams",req.getParameterValueMap(false, true));
-		return "/${subpackage}/${classNameLowerCase}/query.jsp";
+		put("jspaction", req.getServletPath());
+		return "jsp/${subpackage}/${classNameLowerCase}/query";
 	}
 	
 	@RequestMapping("/query2")

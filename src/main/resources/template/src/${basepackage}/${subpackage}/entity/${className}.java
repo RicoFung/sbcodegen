@@ -4,11 +4,14 @@
 <#assign subpkg = subpackage?replace("/",".")>
 package ${basepackage}.${subpkg}.entity;
 
+import java.io.Serializable;
 /**
 <#include "/java_description.include">
  */
-public class ${className} implements java.io.Serializable
+public class ${className} implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+	
 	<#list table.columns as column>
     // ${column.columnAlias!}       db_column: ${column.sqlName} 
 	private ${column.javaType} ${column.columnNameLower};
