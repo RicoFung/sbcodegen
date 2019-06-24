@@ -66,62 +66,12 @@
 <!-- ======================================================================================================= -->
 <script type="text/javascript" src="${r'${staticexternal}'}/res/chok/js/chok.auth.js"></script>
 <script type="text/javascript" src="${r'${staticexternal}'}/res/chok/js/chok.view.query.js"></script>
+<script type="text/javascript" src="${r'${staticinternal}${jspaction}'}.js"></script>
 <script type="text/javascript">
-/**********************************************************/
-/* 全局函数 */
-/**********************************************************/
-$(function() {
-	$chok.view.fn.selectSidebarMenu("${r'${param.menuId}'}","${r'${param.menuPermitId}'}","${r'${param.menuName}'}");
-	$chok.view.query.init.toolbar();
-	$chok.view.query.init.modalFormQuery();
-	$chok.view.query.init.table("${r'${queryParams.f_page}'}","${r'${queryParams.f_pageSize}'}");
-	$chok.auth.btn($chok.view.menuPermitId,$g_btnJson);
-});
-/**********************************************************/
-/* 初始化配置 */
-/**********************************************************/
-$chok.view.query.config.setPreFormParams = function(){
-	$("#f_tcField").val(typeof("${r'${queryParams.f_tcField}'}")=="undefined"?"":"${r'${queryParams.f_tcField}'}");
-};
-$chok.view.query.config.formParams = function(p){
-	p.tcField = $("#f_tcField").val();
-    return p;
-};
-$chok.view.query.config.urlParams = function(){
-	return {
-			f_tcField : $("#f_tcField").val()
-	};
-};
-// config-定义表格列
-$chok.view.query.config.tableColumns = 
-[
-	<#list table.columns as column>
-    {title:"${column.columnNameLower}", field:"${column.columnNameLower}", align:"center", valign:"middle", sortable:true}<#if column_has_next>,</#if>
-	</#list>
-];
-// config-是否显示复合排序
-$chok.view.query.config.showMultiSort = true;
-// config-默认排序字段
-$chok.view.query.config.sortPriority = [{"sortName":"", "sortOrder":"asc"}];
-// callback-加载数据成功后
-$chok.view.query.callback.onLoadSuccess = function(){
-	$chok.auth.btn($chok.view.menuPermitId,$g_btnJson);
-};
-// OVERWRITE-自定义工具栏
-$chok.view.query.init.toolbar = function(){
-	$("#bar_btn_exp").click(function(){
-		$chok.view.query.fn.exp("exp.action", 
-				                "${table.sqlName}",
-				                "${table.sqlName}", 
-				                "<#list table.columns as column>${column.underscoreName}<#if column_has_next>,</#if></#list>",
-				                "<#list table.columns as column>${column.columnNameLower}<#if column_has_next>,</#if></#list>");
-	});
-};
-// OVERWRITE-表格第一二列
-$chok.view.query.fn.getColumns = function(){
-	return $.merge([],$chok.view.query.config.tableColumns);
-};
-// 用户自定义
-$chok.view.fn.customize = function(){
-};
+var $param_menuId = "${param.menuId}";
+var $param_menuPermitId = "${param.menuPermitId}";
+var $param_menuName = "${param.menuName}";
+var $queryParams_f_page = "${queryParams.f_page}";
+var $queryParams_f_pageSize = "${queryParams.f_pageSize}";
+var $queryParams_f_tcField = "${queryParams.f_tcField}";
 </script>
