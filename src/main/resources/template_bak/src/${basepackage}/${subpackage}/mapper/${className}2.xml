@@ -1,0 +1,100 @@
+<#assign className = table.className>   
+<#assign classNameFirstLower = table.classNameFirstLower>   
+<#assign subpkg = subpackage?replace("/",".")>
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">   
+<#macro mapperEl value>${r"#{"}${value}}</#macro>
+
+<mapper namespace="${basepackage}.${subpkg}.entity.${className}">
+      <!-- 自动生成id策略 -->
+    <insert id="add" parameterType="${basepackage}.${subpkg}.entity.${className}" useGeneratedKeys="true" keyProperty="id">  
+       	insert into ${table.underscoreName} 
+       	(<#list table.columns as column> ${column.underscoreName}<#if column_has_next>,</#if></#list>) 
+       	values
+       	(<#list table.columns as column> <@mapperEl column.columnNameFirstLower/><#if column_has_next>,</#if></#list>)
+    </insert>  
+	
+	<delete id="del" parameterType="${basepackage}.${subpkg}.entity.${className}">
+		delete from ${table.underscoreName}
+		<#if table.pkCount gte 1>
+		 where <#list table.compositeIdColumns as column>${column.underscoreName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>	  
+		</#if>
+	</delete>
+	
+	<update id="upd" parameterType="${basepackage}.${subpkg}.entity.${className}">
+		update ${table.underscoreName} set
+	           <#list table.notPkColumns as column>
+	           ${column.underscoreName} = <@mapperEl column.columnNameFirstLower/><#if column_has_next>,</#if> 
+	           </#list>
+		<#if table.pkCount gte 1>
+         where <#list table.compositeIdColumns as column>${column.underscoreName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>	        
+		</#if>
+	</update>
+  	
+	<resultMap type="${basepackage}.${subpkg}.entity.${className}" id="result">
+        <#list table.columns as column>
+        <result property="${column.columnNameLower}" column="${column.sqlName}"/>
+		</#list>
+	</resultMap>
+  	
+	<sql id="columns">
+		<#list table.columns as column>t.${column.underscoreName}<#if column_has_next>,</#if> </#list>
+	</sql>
+	
+	<sql id="order">
+		<choose>
+			<when test="@chok.devwork.Ognl@isNotEmpty(sort)">
+				order by tt.<include refid="orderParse1"/> ${r'${order}'}
+			</when>
+			<when test="@chok.devwork.Ognl@isNotEmpty(multiSort) and @chok.devwork.Ognl@isEmpty(sort)">
+				order by <foreach collection="multiSort" index="index" item="item" separator=",">tt.<include refid="orderParse2" /> ${r'${item.sortOrder}'}</foreach>  
+			</when>
+		</choose>
+	</sql>
+	<sql id="orderParse1">
+		<#list table.columns as column>
+		<if test="sort == '${column.columnNameLower}'">${column.underscoreName}</if>
+		</#list>
+	</sql>
+	<sql id="orderParse2">
+		<#list table.columns as column>
+		<if test="item.sortName == '${column.columnNameLower}'">${column.underscoreName}</if>
+		</#list>
+	</sql>
+	
+	<sql id="page">
+		<if test="@chok.devwork.Ognl@isNotEmpty(offset) and @chok.devwork.Ognl@isNotEmpty(limit)"> limit ${r'#{offset,javaType=String,jdbcType=NUMERIC}'}, ${r'#{limit,javaType=String,jdbcType=NUMERIC}'} </if>
+	</sql>
+	
+	<sql id="dynamicWhere">
+		<where>	      				
+	       <#list table.notPkColumns as column>
+	       <if test="@chok.devwork.Ognl@isNotEmpty(${column.columnNameFirstLower})"> and t.${column.underscoreName} like concat('%',<@mapperEl column.columnNameFirstLower/>,'%')</if>
+	       </#list>
+	       <if test="@chok.devwork.Ognl@isNotEmpty(search)"> and (<#list table.notPkColumns as column>t.${column.underscoreName} like concat('%',${r'#{search}'},'%')<#if column_has_next> or </#if></#list>)</if>	
+		</where>
+	</sql>	
+	
+	<select id="get" resultMap="result">
+		select <include refid="columns"/> 
+		  from ${table.underscoreName} t 
+		<#if table.pkCount gte 1>
+		 where <#list table.compositeIdColumns as column>t.${column.underscoreName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>	  
+		</#if>
+	</select>
+	
+	<select id="query" resultType="list" resultMap="result">
+		select tt.* from 
+		(
+			select <include refid="columns"/> from ${table.underscoreName} t
+			<include refid="dynamicWhere" />
+		) tt
+		<include refid="order" />
+		<include refid="page" />
+	</select>
+	
+	<select id="getCount" resultType="int">
+		select count(1) from ${table.underscoreName} t
+		<include refid="dynamicWhere" />
+	</select>
+</mapper>  

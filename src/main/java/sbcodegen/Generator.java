@@ -14,8 +14,7 @@ public class Generator
 		// 删除生成器的输出目录//
 		// g.deleteOutRootDir();
 		// 通过数据库表生成文件
-		g.generateByTable("oauth_users","oauth_authorities");
-//		g.generateByTable("tb_demo");
+		g.generateByTable("tb_user_info_0a");
 
 		// 自动搜索数据库中的所有表并生成文件,template为模板的根目录
 		// g.generateByAllTable();
