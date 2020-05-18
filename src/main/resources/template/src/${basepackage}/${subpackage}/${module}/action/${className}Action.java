@@ -3,7 +3,7 @@
 <#assign classNameLowerCase = table.classNameLowerCase>  
 <#assign classNameFirstLower = table.classNameFirstLower>  
 <#assign subpkg = subpackage?replace("/",".")>
-package ${basepackage}.${subpkg}.action;
+package ${basepackage}.${subpkg}.${module}.action;
 
 import java.util.List;
 import java.util.Map;
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import chok.devwork.BaseController;
 import chok.util.CollectionUtil;
-import ${basepackage}.${subpkg}.service.${className}Service;
-import ${basepackage}.${subpkg}.entity.${className};
+import ${basepackage}.${subpkg}.${module}.service.${className}Service;
+import ${basepackage}.${subpkg}.${module}.entity.${className};
 
 @Scope("prototype")
 @Controller

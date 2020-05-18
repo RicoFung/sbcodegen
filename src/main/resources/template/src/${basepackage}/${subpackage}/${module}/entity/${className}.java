@@ -2,7 +2,7 @@
 <#assign className = table.className>   
 <#assign classNameLower = className?uncap_first> 
 <#assign subpkg = subpackage?replace("/",".")>
-package ${basepackage}.${subpkg}.entity;
+package ${basepackage}.${subpkg}.${module}.entity;
 
 import java.io.Serializable;
 /**
