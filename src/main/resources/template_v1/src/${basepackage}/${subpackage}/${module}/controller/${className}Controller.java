@@ -47,25 +47,25 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult add(@RequestBody @Validated ${className}AddDTO ${classNameFirstLower}AddDTO, BindingResult validResult)
 	{
-		if (log.isDebugEnabled())
-		{
-			log.debug("==> 请求参数：{}", ${classNameFirstLower}AddDTO.toString());
-		}
-		if (validResult.hasErrors()) 
-		{
-			restResult.setSuccess(false);
-			restResult.setMsg(getValidMsgs(validResult));
-			return restResult;
-		}
 		try
 		{
+			if (log.isDebugEnabled())
+			{
+				log.debug("==> requestDto：{}", restMapper.writeValueAsString(${classNameFirstLower}AddDTO));
+			}
+			if (validResult.hasErrors()) 
+			{
+				restResult.setSuccess(false);
+				restResult.setMsg(getValidMsgs(validResult));
+				return restResult;
+			}
 			${className} ${classNameFirstLower} = new ${className}();
 			BeanUtils.copyProperties(${classNameFirstLower}AddDTO, ${classNameFirstLower});
 			service.add(${classNameFirstLower});
 		}
 		catch(Exception e)
 		{
-			log.error("<== 异常提示：{}", e);
+			log.error("<== Exception：{}", e);
 			restResult.setSuccess(false);
 			restResult.setMsg(e.getMessage());
 		}
@@ -76,24 +76,24 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/del", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult del(@RequestBody @Validated ${className}DelDTO ${classNameFirstLower}DelDTO, BindingResult validResult) 
 	{
-		if (log.isDebugEnabled())
-		{
-			log.debug("==> 请求参数：{}", ${classNameFirstLower}DelDTO.getTcRowids().toString());
-		}
-		if (validResult.hasErrors()) 
-		{
-			restResult.setSuccess(false);
-			restResult.setMsg(getValidMsgs(validResult));
-			return restResult;
-		}
 		try
 		{
+			if (log.isDebugEnabled())
+			{
+				log.debug("==> requestDto：{}", restMapper.writeValueAsString(${classNameFirstLower}DelDTO));
+			}
+			if (validResult.hasErrors()) 
+			{
+				restResult.setSuccess(false);
+				restResult.setMsg(getValidMsgs(validResult));
+				return restResult;
+			}
 			service.del(${classNameFirstLower}DelDTO.getTcRowids());
 			restResult.setSuccess(true);
 		}
 		catch(Exception e)
 		{
-			log.error("<== 异常提示：{}", e);
+			log.error("<== Exception：{}", e);
 			restResult.setSuccess(false);
 			restResult.setMsg(e.getMessage());
 		}
@@ -104,25 +104,25 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/upd", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult upd(@RequestBody @Validated ${className}UpdDTO ${classNameFirstLower}UpdDTO, BindingResult validResult) 
 	{
-		if (log.isDebugEnabled())
-		{
-			log.debug("==> 请求参数：{}", ${classNameFirstLower}UpdDTO.toString());
-		}
-		if (validResult.hasErrors()) 
-		{
-			restResult.setSuccess(false);
-			restResult.setMsg(getValidMsgs(validResult));
-			return restResult;
-		}
 		try
 		{
+			if (log.isDebugEnabled())
+			{
+				log.debug("==> requestDto：{}", restMapper.writeValueAsString(${classNameFirstLower}UpdDTO));
+			}
+			if (validResult.hasErrors()) 
+			{
+				restResult.setSuccess(false);
+				restResult.setMsg(getValidMsgs(validResult));
+				return restResult;
+			}
 			${className} ${classNameFirstLower} = new ${className}();
 			BeanUtils.copyProperties(${classNameFirstLower}UpdDTO, ${classNameFirstLower});
 			service.upd(${classNameFirstLower});
 		}
 		catch(Exception e)
 		{
-			log.error("<== 异常提示：{}", e);
+			log.error("<== Exception：{}", e);
 			restResult.setSuccess(false);
 			restResult.setMsg(e.getMessage());
 		}
@@ -133,23 +133,23 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/get", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult get(@RequestBody @Validated ${className}GetDTO ${classNameFirstLower}GetDTO, BindingResult validResult) 
 	{
-		if (log.isDebugEnabled())
-		{
-			log.debug("==> 请求参数：{}", ${classNameFirstLower}GetDTO.getTcRowid());
-		}
-		if (validResult.hasErrors()) 
-		{
-			restResult.setSuccess(false);
-			restResult.setMsg(getValidMsgs(validResult));
-			return restResult;
-		}
 		try
 		{
+			if (log.isDebugEnabled())
+			{
+				log.debug("==> requestDto：{}", restMapper.writeValueAsString(${classNameFirstLower}GetDTO));
+			}
+			if (validResult.hasErrors()) 
+			{
+				restResult.setSuccess(false);
+				restResult.setMsg(getValidMsgs(validResult));
+				return restResult;
+			}
 			restResult.put("vo", service.get(${classNameFirstLower}GetDTO.getTcRowid()));
 		}
 		catch(Exception e)
 		{
-			log.error("<== 异常提示：{}", e);
+			log.error("<== Exception：{}", e);
 			restResult.setSuccess(false);
 			restResult.setMsg(e.getMessage());
 		}
@@ -160,19 +160,19 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/query", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult query(@RequestBody ${className}QueryDTO ${classNameFirstLower}QueryDTO)
 	{
-		if (log.isDebugEnabled())
-		{
-			log.debug("==> 请求参数：{}", ${classNameFirstLower}QueryDTO.toString());
-		}
 		try
 		{
+			if (log.isDebugEnabled())
+			{
+				log.debug("==> requestDto：{}", restMapper.writeValueAsString(${classNameFirstLower}QueryDTO));
+			}
 			Map<String, Object> params = restMapper.convertValue(${classNameFirstLower}QueryDTO, new TypeReference<Map<String, Object>>(){});
 	        restResult.put("total", service.getCount(params));
 	        restResult.put("rows", service.query(params));
 		}
 		catch (Exception e)
 		{
-			log.error("<== 异常提示：{}", e);
+			log.error("<== Exception：{}", e);
 			restResult.setSuccess(false);
 			restResult.setMsg(e.getMessage());
 		}

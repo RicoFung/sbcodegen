@@ -38,7 +38,9 @@
 	</resultMap>
   	
 	<sql id="columns">
-		<#list table.columns as column>t.${column.sqlName}<#if column_has_next>,</#if> </#list>
+		<#list table.columns as column>
+		t.${column.sqlName}<#if column_has_next>,</#if> 
+		</#list>
 	</sql>
 	
 	<sql id="order">
@@ -67,9 +69,9 @@
 	<sql id="dynamicWhere">
 		<where>	      				
 	       <#list table.notPkColumns as column>
-	       <if test="@chok.devwork.Ognl@isNotEmpty(${column.columnNameFirstLower})"> AND t.${column.sqlName} LIKE CONCAT('%',<@mapperEl column.columnNameFirstLower/>,'%')</if>
+	       <if test="@chok.devwork.Ognl@isNotEmpty(${column.columnNameFirstLower})"> AND t.${column.sqlName} LIKE '%'||<@mapperEl column.columnNameFirstLower/>||'%'</if>
 	       </#list>
-	       <if test="@chok.devwork.Ognl@isNotEmpty(search)"> AND (<#list table.notPkColumns as column>t.${column.sqlName} LIKE CONCAT('%',${r'#{search}'},'%')<#if column_has_next> OR </#if></#list>)</if>	
+	       <if test="@chok.devwork.Ognl@isNotEmpty(search)"> AND (<#list table.notPkColumns as column>t.${column.sqlName} LIKE '%'||${r'#{search}'}||'%'<#if column_has_next> OR </#if></#list>)</if>	
 		</where>
 	</sql>	
 	
@@ -84,7 +86,7 @@
 	<select id="query" resultType="list" resultMap="result">
 		<choose>
 			<!-- 翻页 -->
-			<when test="@chok.devwork.Ognl@isNotEmpty(offset) and @chok.devwork.Ognl@isNotEmpty(limit)">
+			<when test="@chok.devwork.Ognl@isNotEmpty(page) and @chok.devwork.Ognl@isNotEmpty(pagesize)">
 				SELECT * FROM (SELECT row_.*, ROWNUM rownum_ FROM(
 					SELECT tt.* FROM 
 					(
@@ -92,8 +94,8 @@
 						<include refid="dynamicWhere" />
 					) tt
 					<include refid="order" />
-	            ) row_ WHERE rownum &lt;= ${r'#{offset,javaType=String,jdbcType=NUMERIC}'}+${r'#{limit,javaType=String,jdbcType=NUMERIC}'} ) 
-	            WHERE rownum_ &gt; ${r'#{offset,javaType=String,jdbcType=NUMERIC}'}
+	            ) row_ WHERE rownum &lt;= ${r'#{page}'}*${r'#{pagesize}'} ) 
+	            WHERE rownum_ &gt; (${r'#{page}'}-1)*${r'#{pagesize}'}
 			</when>
 			<!-- 非翻页 -->
 			<otherwise>
