@@ -8,8 +8,8 @@
     </comment>  
       
     <entry key="basepackage">com.epo</entry>  
-    <entry key="subpackage">dict</entry>
-    <entry key="module">tbdictcategory0a</entry>
+    <entry key="subpackage">admin</entry>
+    <entry key="module">tbdictplu0a</entry>
 
     <!-- jsp namespace: web/${namespace}/${className}/list.jsp 
     <entry key="namespace">view</entry>
