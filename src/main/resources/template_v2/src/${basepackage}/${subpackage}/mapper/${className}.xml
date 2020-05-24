@@ -23,10 +23,12 @@
 	</delete>
 	
 	<update id="upd" parameterType="${basepackage}.${subpkg}.entity.${className}">
-		UPDATE ${table.sqlName} SET
-	           <#list table.notPkColumns as column>
-	           ${column.sqlName} = <@mapperEl column.columnNameFirstLower/><#if column_has_next>,</#if> 
-	           </#list>
+		UPDATE ${table.sqlName} 
+		<set>
+        <#list table.notPkColumns as column>
+        <if test="@chok.devwork.Ognl@isNotNull(${column.columnNameFirstLower})"> ${column.sqlName} = <@mapperEl column.columnNameFirstLower/><#if column_has_next>,</#if></if>
+        </#list>
+        </set>
 	     <#if table.pkCount gte 1>
          WHERE <#list table.compositeIdColumns as column>${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>
          </#if>        
