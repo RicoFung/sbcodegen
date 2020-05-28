@@ -60,6 +60,23 @@
 		</#list>
 	</sql>
 	
+	<sql id="columnsOnSelectFields">
+		<choose>
+			<when test="@chok.devwork.Ognl@isNotEmpty(selectFields) and @chok.devwork.Ognl@isNotNull(selectFields)">
+			    <foreach collection ="selectFields" item="field" index="index" separator=",">
+					<#list table.columns as column>
+					<if test="field == '${column.columnNameLower}'">t.${column.sqlName}</if>
+					</#list>
+			    </foreach>
+			</when>
+			<otherwise>
+				<#list table.columns as column>
+				t.${column.sqlName}<#if column_has_next>,</#if> 
+				</#list>
+			</otherwise>
+		</choose>
+	</sql>
+	
 	<sql id="order">
 		<choose>
 			<when test="@chok.devwork.Ognl@isNotEmpty(sort)">
@@ -94,6 +111,14 @@
 	
 	<select id="get" resultMap="result">
 		SELECT <include refid="columns"/> 
+		  FROM ${table.sqlName} t 
+		<#if table.pkCount gte 1>
+		 WHERE <#list table.compositeIdColumns as column>t.${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> AND </#if> </#list>	  
+		</#if>
+	</select>
+	
+	<select id="getOnSelectFields" resultMap="result">
+		SELECT <include refid="columnsOnSelectFields"/> 
 		  FROM ${table.sqlName} t 
 		<#if table.pkCount gte 1>
 		 WHERE <#list table.compositeIdColumns as column>t.${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> AND </#if> </#list>	  

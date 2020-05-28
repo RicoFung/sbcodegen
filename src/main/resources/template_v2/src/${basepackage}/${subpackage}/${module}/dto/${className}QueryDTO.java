@@ -44,7 +44,7 @@ public class ${className}QueryDTO implements Serializable
 
 	<#list table.columns as column>
     // ${column.columnAlias!}       db_column: ${column.sqlName} 
-	@ApiModelProperty(value = "${column.columnAlias!}", example = "\"\"")
+	@ApiModelProperty(value = "${column.columnAlias!}", example = "\"\"", position = ${column_index})
 	private ${column.javaType} ${column.columnNameLower};
 	</#list>
 
