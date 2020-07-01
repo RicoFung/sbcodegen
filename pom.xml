@@ -14,7 +14,7 @@
 		</dependency>
 
 		<!-- db driver myql-->
-		<dependency><groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><version>5.1.43</version></dependency>
+		<dependency><groupId>mysql</groupId><artifactId>mysql-connector-java</artifactId><version>8.0.16</version></dependency>
 		<!-- db driver oracle-->
 		<dependency><groupId>com.sbapi</groupId><artifactId>sbapi</artifactId><version>0.1</version><scope>system</scope><systemPath>${project.basedir}/lib/ojdbc14.jar</systemPath></dependency>
 
