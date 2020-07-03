@@ -8,12 +8,35 @@
 
 <mapper namespace="${basepackage}.${subpkg}.entity.${className}">
       <!-- 自动生成id策略 -->
-    <insert id="add" parameterType="${basepackage}.${subpkg}.entity.${className}" useGeneratedKeys="true" keyProperty="id">  
+    <insert id="add" parameterType="${basepackage}.${subpkg}.entity.${className}">  
+	    <selectKey keyProperty="tcRowid" resultType="long" order="BEFORE">
+	         SELECT SEQ_${table.sqlName}.NEXTVAL FROM DUAL
+	     </selectKey>
        	INSERT INTO ${table.sqlName} 
        	(<#list table.columns as column> ${column.sqlName}<#if column_has_next>,</#if></#list>) 
        	VALUES
        	(<#list table.columns as column> <@mapperEl column.columnNameFirstLower/><#if column_has_next>,</#if></#list>)
     </insert>  
+    
+    <insert id="addBatch">
+    	INSERT INTO ${table.sqlName}
+    	(
+        <#list table.columns as column>
+        ${column.sqlName}<#if column_has_next>,</#if>
+        </#list>
+        )
+	    SELECT SEQ_${table.sqlName}.NEXTVAL, T.*
+        FROM 
+        (
+	    <foreach collection ="list" item="item" index="index" separator="UNION ALL">
+	    SELECT
+        <#list table.notPkColumns as column>
+		<@mapperItemEl column.columnNameFirstLower/> AS ${column.sqlName}<#if column_has_next>,</#if>
+       	</#list>
+	    FROM DUAL
+	    </foreach>
+        ) T
+    </insert>
 	
 	<delete id="del" parameterType="${basepackage}.${subpkg}.entity.${className}">
 		DELETE FROM ${table.sqlName} 
@@ -60,12 +83,12 @@
 		</#list>
 	</sql>
 	
-	<sql id="columnsOnSelectFields">
+	<sql id="dynamicColumns">
 		<choose>
-			<when test="@chok.devwork.Ognl@isNotEmpty(selectFields) and @chok.devwork.Ognl@isNotNull(selectFields)">
-			    <foreach collection ="selectFields" item="field" index="index" separator=",">
+			<when test="@chok.devwork.Ognl@isNotEmpty(dynamicColumns) and @chok.devwork.Ognl@isNotNull(dynamicColumns)">
+			    <foreach collection ="dynamicColumns" item="columns" index="index" separator=",">
 					<#list table.columns as column>
-					<if test="field == '${column.columnNameLower}'">t.${column.sqlName}</if>
+					<if test="columns == '${column.columnNameLower}'">t.${column.sqlName}</if>
 					</#list>
 			    </foreach>
 			</when>
@@ -117,12 +140,10 @@
 		</#if>
 	</select>
 	
-	<select id="getOnSelectFields" resultMap="result">
-		SELECT <include refid="columnsOnSelectFields"/> 
+	<select id="getDynamic" resultMap="result">
+		SELECT <include refid="dynamicColumns"/> 
 		  FROM ${table.sqlName} t 
-		<#if table.pkCount gte 1>
-		 WHERE <#list table.compositeIdColumns as column>t.${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> AND </#if> </#list>	  
-		</#if>
+		 <include refid="dynamicWhere" />	  
 	</select>
 	
 	<select id="query" resultType="list" resultMap="result">
@@ -144,6 +165,32 @@
 				SELECT tt.* FROM 
 				(
 					SELECT <include refid="columns"/> FROM ${table.sqlName} t
+					<include refid="dynamicWhere" />
+				) tt
+				<include refid="order" />
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="queryDynamic" resultType="list" resultMap="result">
+		<choose>
+			<!-- 翻页 -->
+			<when test="@chok.devwork.Ognl@isNotEmpty(page) and @chok.devwork.Ognl@isNotEmpty(pagesize)">
+				SELECT * FROM (SELECT row_.*, ROWNUM rownum_ FROM(
+					SELECT tt.* FROM 
+					(
+						SELECT <include refid="dynamicColumns"/> FROM ${table.sqlName} t
+						<include refid="dynamicWhere" />
+					) tt
+					<include refid="order" />
+	            ) row_ WHERE rownum &lt;= ${r'#{page}'}*${r'#{pagesize}'} ) 
+	            WHERE rownum_ &gt; (${r'#{page}'}-1)*${r'#{pagesize}'}
+			</when>
+			<!-- 非翻页 -->
+			<otherwise>
+				SELECT tt.* FROM 
+				(
+					SELECT <include refid="dynamicColumns"/> FROM ${table.sqlName} t
 					<include refid="dynamicWhere" />
 				) tt
 				<include refid="order" />
