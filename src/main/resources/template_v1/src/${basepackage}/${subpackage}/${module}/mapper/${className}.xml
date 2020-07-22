@@ -4,15 +4,48 @@
 <?xml version="1.0" encoding="UTF-8"?>  
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">   
 <#macro mapperEl value>${r"#{"}${value}}</#macro>
+<#macro mapperItemEl value>${r"#{item."}${value}}</#macro>
 
 <mapper namespace="${basepackage}.${subpkg}.${module}.entity.${className}">
+	<!-- 开启基于redis的二级缓存 -->
+	<!-- 
+    <cache type="chok.redis.mybatis.RedisCache">
+    	<property name="eviction" value="LRU" />
+        <property name="flushInterval" value="6000000" />
+        <property name="size" value="1024" />
+        <property name="readOnly" value="false" />
+    </cache>
+     -->
       <!-- 自动生成id策略 -->
-    <insert id="add" parameterType="${basepackage}.${subpkg}.${module}.entity.${className}" useGeneratedKeys="true" keyProperty="id">  
+    <insert id="add" parameterType="${basepackage}.${subpkg}.${module}.entity.${className}">  
+       	<selectKey keyProperty="tcRowid" resultType="long" order="BEFORE">
+	         SELECT SEQ_${table.sqlName}.NEXTVAL FROM DUAL
+	     </selectKey>
        	INSERT INTO ${table.sqlName} 
        	(<#list table.columns as column> ${column.sqlName}<#if column_has_next>,</#if></#list>) 
        	VALUES
        	(<#list table.columns as column> <@mapperEl column.columnNameFirstLower/><#if column_has_next>,</#if></#list>)
     </insert>  
+    
+    <insert id="addBatch">
+    	INSERT INTO ${table.sqlName}
+    	(
+        <#list table.columns as column>
+        ${column.sqlName}<#if column_has_next>,</#if>
+        </#list>
+        )
+	    SELECT SEQ_${table.sqlName}.NEXTVAL, T.*
+        FROM 
+        (
+	    <foreach collection ="list" item="item" index="index" separator="UNION ALL">
+	    SELECT
+        <#list table.notPkColumns as column>
+		<@mapperItemEl column.columnNameFirstLower/> AS ${column.sqlName}<#if column_has_next>,</#if>
+       	</#list>
+	    FROM DUAL
+	    </foreach>
+        ) T
+    </insert>
 	
 	<delete id="del" parameterType="${basepackage}.${subpkg}.${module}.entity.${className}">
 		DELETE FROM ${table.sqlName} 
@@ -22,14 +55,30 @@
 	</delete>
 	
 	<update id="upd" parameterType="${basepackage}.${subpkg}.${module}.entity.${className}">
-		UPDATE ${table.sqlName} SET
-	           <#list table.notPkColumns as column>
-	           ${column.sqlName} = <@mapperEl column.columnNameFirstLower/><#if column_has_next>,</#if> 
-	           </#list>
+		UPDATE ${table.sqlName} T
+		<set>
+        <#list table.notPkColumns as column>
+        <if test="@chok.devwork.Ognl@isNotNull(${column.columnNameFirstLower})"> T.${column.sqlName} = <@mapperEl column.columnNameFirstLower/><#if column_has_next>,</#if></if>
+        </#list>
+        </set>
 	     <#if table.pkCount gte 1>
-         WHERE <#list table.compositeIdColumns as column>${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>
+         WHERE <#list table.compositeIdColumns as column>T.${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>
          </#if>        
 	</update>
+  	
+  	<update id="updBatch">
+  		<foreach collection="list" index="index" item="item" open="begin" close=";end;" separator=";">
+	        UPDATE ${table.sqlName} T
+	        <set>
+		       <#list table.notPkColumns as column>
+		       <if test="@chok.devwork.Ognl@isNotEmpty(item.${column.columnNameFirstLower})"> T.${column.sqlName} = <@mapperItemEl column.columnNameFirstLower/>,</if>
+		       </#list>
+	        </set>
+			<#if table.pkCount gte 1>
+			WHERE <#list table.compositeIdColumns as column>T.${column.sqlName} = <@mapperItemEl column.columnNameLower/> <#if column_has_next> and </#if> </#list>
+	   		</#if>  
+    	</foreach>
+  	</update>
   	
 	<resultMap type="${basepackage}.${subpkg}.${module}.entity.${className}" id="result">
         <#list table.columns as column>
@@ -39,19 +88,47 @@
   	
 	<sql id="columns">
 		<#list table.columns as column>
-		t.${column.sqlName}<#if column_has_next>,</#if> 
+		T.${column.sqlName}<#if column_has_next>,</#if> 
 		</#list>
+	</sql>
+	
+	<sql id="dynamicColumns">
+		<choose>
+			<when test="@chok.devwork.Ognl@isNotEmpty(dynamicColumns) and @chok.devwork.Ognl@isNotNull(dynamicColumns)">
+			    <foreach collection ="dynamicColumns" item="col" index="index" separator=",">
+					<#list table.columns as column>
+					<if test="col == '${column.columnNameLower}'">T.${column.sqlName}</if>
+					</#list>
+			    </foreach>
+			</when>
+			<otherwise>
+				<#list table.columns as column>
+				T.${column.sqlName}<#if column_has_next>,</#if> 
+				</#list>
+			</otherwise>
+		</choose>
 	</sql>
 	
 	<sql id="order">
 		<choose>
 			<when test="@chok.devwork.Ognl@isNotEmpty(sort)">
-				ORDER BY tt.<include refid="orderParse1"/> ${r'${order}'}
+				ORDER BY TT.<include refid="orderParse1"/> ${r'${order}'}
 			</when>
-			<when test="@chok.devwork.Ognl@isNotEmpty(multiSort) and @chok.devwork.Ognl@isEmpty(sort)">
-				ORDER BY <foreach collection="multiSort" index="index" item="item" separator=",">tt.<include refid="orderParse2" /> ${r'${item.sortOrder}'}</foreach>  
+			<when test="@chok.devwork.Ognl@isNotEmpty(multiSort)">
+				ORDER BY <foreach collection="multiSort" index="index" item="item" separator=",">TT.<include refid="orderParse2" /> ${r'${item.sortOrder}'}</foreach>  
 			</when>
 			<otherwise>
+				ORDER BY TT.TC_ROWID DESC
+			</otherwise>
+		</choose>
+	</sql>
+	<sql id="dynamicOrder">
+		<choose>
+			<when test="@chok.devwork.Ognl@isNotEmpty(dynamicOrder)">
+				ORDER BY <foreach collection="dynamicOrder" index="index" item="item" separator=",">TT.<include refid="orderParse2" /> ${r'${item.sortOrder}'}</foreach>  
+			</when>
+			<otherwise>
+				ORDER BY TT.TC_ROWID DESC
 			</otherwise>
 		</choose>
 	</sql>
@@ -67,20 +144,31 @@
 	</sql>
 	
 	<sql id="dynamicWhere">
-		<where>	      				
-	       <#list table.notPkColumns as column>
-	       <if test="@chok.devwork.Ognl@isNotEmpty(${column.columnNameFirstLower})"> AND t.${column.sqlName} LIKE '%'||<@mapperEl column.columnNameFirstLower/>||'%'</if>
-	       </#list>
-	       <if test="@chok.devwork.Ognl@isNotEmpty(search)"> AND (<#list table.notPkColumns as column>t.${column.sqlName} LIKE '%'||${r'#{search}'}||'%'<#if column_has_next> OR </#if></#list>)</if>	
+		<where>
+			<#if table.pkCount gte 1>
+			<#list table.compositeIdColumns as column>
+    		<if test="@chok.devwork.Ognl@isNotEmpty(${column.columnNameFirstLower})"> AND T.${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if></if>
+			</#list>
+			</#if>  				
+	       	<#list table.notPkColumns as column>
+	       	<if test="@chok.devwork.Ognl@isNotEmpty(${column.columnNameFirstLower})"> AND T.${column.sqlName} LIKE '%'||<@mapperEl column.columnNameFirstLower/>||'%'</if>
+	       	</#list>
+	       	<if test="@chok.devwork.Ognl@isNotEmpty(search)"> AND (<#list table.notPkColumns as column>T.${column.sqlName} LIKE '%'||${r'#{search}'}||'%'<#if column_has_next> OR </#if></#list>)</if>	
 		</where>
 	</sql>	
 	
 	<select id="get" resultMap="result">
 		SELECT <include refid="columns"/> 
-		  FROM ${table.sqlName} t 
+		  FROM ${table.sqlName} T 
 		<#if table.pkCount gte 1>
-		 WHERE <#list table.compositeIdColumns as column>t.${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> AND </#if> </#list>	  
+		 WHERE <#list table.compositeIdColumns as column>T.${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> AND </#if> </#list>	  
 		</#if>
+	</select>
+	
+	<select id="getDynamic" resultMap="result">
+		SELECT <include refid="dynamicColumns"/> 
+		  FROM ${table.sqlName} T 
+		 <include refid="dynamicWhere" />	  
 	</select>
 	
 	<select id="query" resultType="list" resultMap="result">
@@ -88,29 +176,55 @@
 			<!-- 翻页 -->
 			<when test="@chok.devwork.Ognl@isNotEmpty(page) and @chok.devwork.Ognl@isNotEmpty(pagesize)">
 				SELECT * FROM (SELECT row_.*, ROWNUM rownum_ FROM(
-					SELECT tt.* FROM 
+					SELECT TT.* FROM 
 					(
-						SELECT <include refid="columns"/> FROM ${table.sqlName} t
+						SELECT <include refid="columns"/> FROM ${table.sqlName} T
 						<include refid="dynamicWhere" />
-					) tt
+					) TT
 					<include refid="order" />
 	            ) row_ WHERE rownum &lt;= ${r'#{page}'}*${r'#{pagesize}'} ) 
 	            WHERE rownum_ &gt; (${r'#{page}'}-1)*${r'#{pagesize}'}
 			</when>
 			<!-- 非翻页 -->
 			<otherwise>
-				SELECT tt.* FROM 
+				SELECT TT.* FROM 
 				(
-					SELECT <include refid="columns"/> FROM ${table.sqlName} t
+					SELECT <include refid="columns"/> FROM ${table.sqlName} T
 					<include refid="dynamicWhere" />
-				) tt
+				) TT
 				<include refid="order" />
 			</otherwise>
 		</choose>
 	</select>
 	
+	<select id="queryDynamic" resultType="list" resultMap="result">
+		<choose>
+			<!-- 翻页 -->
+			<when test="@chok.devwork.Ognl@isNotEmpty(page) and @chok.devwork.Ognl@isNotEmpty(pagesize)">
+				SELECT * FROM (SELECT row_.*, ROWNUM rownum_ FROM(
+					SELECT TT.* FROM 
+					(
+						SELECT <include refid="dynamicColumns"/> FROM ${table.sqlName} T
+						<include refid="dynamicWhere" />
+					) TT
+					<include refid="dynamicOrder" />
+	            ) row_ WHERE rownum &lt;= ${r'#{page}'}*${r'#{pagesize}'} ) 
+	            WHERE rownum_ &gt; (${r'#{page}'}-1)*${r'#{pagesize}'}
+			</when>
+			<!-- 非翻页 -->
+			<otherwise>
+				SELECT TT.* FROM 
+				(
+					SELECT <include refid="dynamicColumns"/> FROM ${table.sqlName} T
+					<include refid="dynamicWhere" />
+				) TT
+				<include refid="dynamicOrder" />
+			</otherwise>
+		</choose>
+	</select>
+	
 	<select id="getCount" resultType="int">
-		SELECT COUNT(1) FROM ${table.sqlName} t
+		SELECT COUNT(1) FROM ${table.sqlName} T
 		<include refid="dynamicWhere" />
 	</select>
 </mapper>  
