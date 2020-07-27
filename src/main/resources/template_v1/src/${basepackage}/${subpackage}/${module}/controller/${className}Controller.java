@@ -47,6 +47,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult add(@RequestBody @Validated ${className}AddDTO ${classNameFirstLower}AddDTO, BindingResult validResult)
 	{
+		restResult = new RestResult();
 		try
 		{
 			if (log.isDebugEnabled())
@@ -76,6 +77,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/del", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult del(@RequestBody @Validated ${className}DelDTO ${classNameFirstLower}DelDTO, BindingResult validResult) 
 	{
+		restResult = new RestResult();
 		try
 		{
 			if (log.isDebugEnabled())
@@ -104,6 +106,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/upd", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult upd(@RequestBody @Validated ${className}UpdDTO ${classNameFirstLower}UpdDTO, BindingResult validResult) 
 	{
+		restResult = new RestResult();
 		try
 		{
 			if (log.isDebugEnabled())
@@ -133,6 +136,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/get", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult get(@RequestBody @Validated ${className}GetDTO ${classNameFirstLower}GetDTO, BindingResult validResult) 
 	{
+		restResult = new RestResult();
 		try
 		{
 			if (log.isDebugEnabled())
@@ -164,6 +168,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/query", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult query(@RequestBody ${className}QueryDTO ${classNameFirstLower}QueryDTO)
 	{
+		restResult = new RestResult();
 		try
 		{
 			if (log.isDebugEnabled())
