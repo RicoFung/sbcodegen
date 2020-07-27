@@ -7,7 +7,12 @@
 <#assign prefix = subpkg?substring(splitIndex+1)>
 package ${basepackage}.${subpkg}.${module}.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,21 +23,27 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import ${basepackage}.${subpkg}.${module}.dto.${className}AddDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}DelDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}GetDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}QueryDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}UpdDTO;
-import ${basepackage}.${subpkg}.entity.${className};
 import ${basepackage}.${subpkg}.${module}.service.${className}Service;
+import ${basepackage}.${subpkg}.entity.${className};
+
 import com.fasterxml.jackson.core.type.TypeReference;
 
+import chok.common.RestConstants;
 import chok.common.RestResult;
 import chok.devwork.springboot.BaseRestController;
+import chok.util.POIUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "${prefix}-${className}")
 @RestController(value = "${prefix}${className}Controller")
@@ -189,4 +200,38 @@ public class ${className}Controller extends BaseRestController<${className}>
 		}
 		return restResult;
 	}
+	
+	@ApiOperation("上传")
+	@RequestMapping(value = "/imp", method = RequestMethod.POST, consumes = "multipart/*", headers = "content-type=multipart/form-data")
+	public RestResult imp(@ApiParam(value = "上传文件", required = true) @RequestPart("tcFile") @Valid MultipartFile tcFile)
+	{
+		try
+		{
+//			String tcUuid = UUID.randomUUID().toString();
+			List<TbDemo> impList = new ArrayList<TbDemo>();
+			List<String[]> excelList = POIUtil.readExcel(tcFile, 1);
+			// Excel 2 List<T>
+			for(String[] excelRow : excelList)
+			{
+				${className} ${classNameFirstLower} = new ${className}();
+				Map<String, Object> m = new HashMap<String, Object>();
+				<#list table.notPkColumns as column>
+				m.put("${column.columnNameLower}", excelRow[${column_index}]);
+				</#list>
+				org.apache.commons.beanutils.BeanUtils.populate(${classNameFirstLower}, m);
+				impList.add(${classNameFirstLower});
+			}
+			// 分批写入，每批100条
+			service.addBatch(impList, 100);
+		}
+		catch (Exception e)
+		{
+			log.error("<== Exception：{}", e);
+			restResult.setSuccess(false);
+			restResult.setCode(RestConstants.ERROR_CODE1);
+			restResult.setMsg(e.getMessage());
+		}
+		return restResult;
+	}
+	
 }
