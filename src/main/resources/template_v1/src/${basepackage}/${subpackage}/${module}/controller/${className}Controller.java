@@ -3,6 +3,8 @@
 <#assign classNameLowerCase = table.classNameLowerCase>  
 <#assign classNameFirstLower = table.classNameFirstLower>  
 <#assign subpkg = subpackage?replace("/",".")>
+<#assign splitIndex = subpkg?index_of(".")>
+<#assign prefix = subpkg?substring(splitIndex+1)>
 package ${basepackage}.${subpkg}.${module}.controller;
 
 import java.util.Map;
@@ -32,8 +34,8 @@ import chok.devwork.springboot.BaseRestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags = "${classNameLowerCase}管理")
-@RestController
+@Api(tags = "${prefix}-${className}")
+@RestController(value = "${prefix}${className}Controller")
 @RequestMapping("/${subpackage}/${classNameLowerCase}")
 public class ${className}Controller extends BaseRestController<${className}>
 {

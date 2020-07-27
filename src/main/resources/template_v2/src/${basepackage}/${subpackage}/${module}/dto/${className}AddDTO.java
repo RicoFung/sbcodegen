@@ -6,7 +6,6 @@ package ${basepackage}.${subpkg}.${module}.dto;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModel;
@@ -17,10 +16,10 @@ public class ${className}AddDTO implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	<#list table.columns as column>
+	<#list table.notPkColumns as column>
     // ${column.columnAlias!}       db_column: ${column.sqlName} 
 	@ApiModelProperty(value = "${column.columnAlias!}", example = "\"\"", position = ${column_index})
-//	@NotNull(message = "${column.columnAlias}不能为空！")
+	@NotNull(message = "${column.columnAlias}不能为空！")
 	private ${column.javaType} ${column.columnNameLower};
 	</#list>
 
@@ -28,7 +27,7 @@ public class ${className}AddDTO implements Serializable
 }
 
 <#macro generateJavaColumns>
-	<#list table.columns as column>
+	<#list table.notPkColumns as column>
 		<#if column.isDateTimeColumn>
 	public String get${column.columnName}String() 
 	{

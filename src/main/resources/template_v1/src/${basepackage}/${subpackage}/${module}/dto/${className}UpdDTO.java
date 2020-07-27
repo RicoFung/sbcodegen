@@ -16,12 +16,21 @@ public class ${className}UpdDTO implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	<#list table.columns as column>
-    // ${column.columnAlias!}       db_column: ${column.sqlName} 
-	@ApiModelProperty(value = "${column.columnAlias!}", example = "\"\"")
-	@NotNull(message = "${column.columnAlias}不能为空！")
+	<#if table.pkCount gte 1>
+	<#list table.compositeIdColumns as column>
+	// ${column.columnAlias!}       db_column: ${column.sqlName} 
+	@ApiModelProperty(value = "${column.columnAlias!}", example = "\"\"", position = ${column_index})
+	@NotNull(message = "${column.columnNameLower}(${column.columnAlias}) 不能为空！")
 	private ${column.javaType} ${column.columnNameLower};
 	</#list>
+	</#if>
+	
+    <#list table.notPkColumns as column>
+    // ${column.columnAlias!}       db_column: ${column.sqlName} 
+	@ApiModelProperty(value = "${column.columnAlias!}", example = "\"\"", position = ${column_index+1})
+	//	@NotNull(message = "${column.columnNameLower}(${column.columnAlias}) 不能为空！")
+	private ${column.javaType} ${column.columnNameLower};
+    </#list>
 
 <@generateJavaColumns/>
 }

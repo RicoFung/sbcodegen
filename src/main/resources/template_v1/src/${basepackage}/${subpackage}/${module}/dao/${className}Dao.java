@@ -1,6 +1,9 @@
 <#assign className = table.className>   
 <#assign classNameLower = className?uncap_first> 
+<#assign classNameLowerCase = table.classNameLowerCase>  
 <#assign subpkg = subpackage?replace("/",".")>
+<#assign splitIndex = subpkg?index_of(".")>
+<#assign prefix = subpkg?substring(splitIndex+1)>
 package ${basepackage}.${subpkg}.${module}.dao;
 
 import javax.annotation.Resource;
@@ -9,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import chok.devwork.springboot.BaseDao;
 import ${basepackage}.${subpkg}.${module}.entity.${className};
 
-@Repository
+@Repository(value = "${prefix}${className}Dao")
 public class ${className}Dao extends BaseDao<${className}, Long>
 {
 	@Resource//(name = "firstSqlSessionTemplate")

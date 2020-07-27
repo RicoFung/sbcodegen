@@ -3,6 +3,8 @@
 <#assign classNameLowerCase = table.classNameLowerCase>  
 <#assign classNameFirstLower = table.classNameFirstLower>  
 <#assign subpkg = subpackage?replace("/",".")>
+<#assign splitIndex = subpkg?index_of(".")>
+<#assign prefix = subpkg?substring(splitIndex+1)>
 package ${basepackage}.${subpkg}.${module}.controller;
 
 import java.util.Map;
@@ -32,8 +34,8 @@ import chok.devwork.springboot.BaseRestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags = "${classNameLowerCase}管理")
-@RestController
+@Api(tags = "${prefix}-${className}")
+@RestController(value = "${prefix}${className}Controller")
 @RequestMapping("/${subpackage}/${classNameLowerCase}")
 public class ${className}Controller extends BaseRestController<${className}>
 {
@@ -47,6 +49,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult add(@RequestBody @Validated ${className}AddDTO ${classNameFirstLower}AddDTO, BindingResult validResult)
 	{
+		restResult = new RestResult();
 		try
 		{
 			if (log.isDebugEnabled())
@@ -76,6 +79,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/del", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult del(@RequestBody @Validated ${className}DelDTO ${classNameFirstLower}DelDTO, BindingResult validResult) 
 	{
+		restResult = new RestResult();
 		try
 		{
 			if (log.isDebugEnabled())
@@ -104,6 +108,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/upd", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult upd(@RequestBody @Validated ${className}UpdDTO ${classNameFirstLower}UpdDTO, BindingResult validResult) 
 	{
+		restResult = new RestResult();
 		try
 		{
 			if (log.isDebugEnabled())
@@ -133,6 +138,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/get", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult get(@RequestBody @Validated ${className}GetDTO ${classNameFirstLower}GetDTO, BindingResult validResult) 
 	{
+		restResult = new RestResult();
 		try
 		{
 			if (log.isDebugEnabled())
@@ -145,7 +151,11 @@ public class ${className}Controller extends BaseRestController<${className}>
 				restResult.setMsg(getValidMsgs(validResult));
 				return restResult;
 			}
-			restResult.put("vo", service.get(${classNameFirstLower}GetDTO.getTcRowid()));
+			Map<String, Object> param = restMapper.convertValue(${classNameFirstLower}GetDTO,
+					new TypeReference<Map<String, Object>>()
+			{
+			});
+			restResult.put("row", service.getDynamic(param));
 		}
 		catch(Exception e)
 		{
@@ -160,15 +170,16 @@ public class ${className}Controller extends BaseRestController<${className}>
 	@RequestMapping(value = "/query", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public RestResult query(@RequestBody ${className}QueryDTO ${classNameFirstLower}QueryDTO)
 	{
+		restResult = new RestResult();
 		try
 		{
 			if (log.isDebugEnabled())
 			{
 				log.debug("==> requestDto：{}", restMapper.writeValueAsString(${classNameFirstLower}QueryDTO));
 			}
-			Map<String, Object> params = restMapper.convertValue(${classNameFirstLower}QueryDTO, new TypeReference<Map<String, Object>>(){});
-	        restResult.put("total", service.getCount(params));
-	        restResult.put("rows", service.query(params));
+			Map<String, Object> param = restMapper.convertValue(${classNameFirstLower}QueryDTO, new TypeReference<Map<String, Object>>(){});
+	        restResult.put("total", service.getCount(param));
+			restResult.put("rows", service.queryDynamic(param));
 		}
 		catch (Exception e)
 		{
