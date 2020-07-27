@@ -11,13 +11,13 @@ import ${basepackage}.${subpkg}.${module}.dao.${className}Dao;
 import ${basepackage}.${subpkg}.${module}.entity.${className};
 
 @Service
-public class ${className}Service extends BaseService<${className},Long>
+public class ${className}Service extends BaseService<${className}, Long>
 {
 	@Autowired
 	private ${className}Dao dao;
 
 	@Override
-	public BaseDao<${className},Long> getEntityDao() 
+	public BaseDao<${className}, Long> getEntityDao() 
 	{
 		return dao;
 	}

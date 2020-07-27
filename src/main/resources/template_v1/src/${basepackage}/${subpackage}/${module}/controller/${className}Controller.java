@@ -145,7 +145,11 @@ public class ${className}Controller extends BaseRestController<${className}>
 				restResult.setMsg(getValidMsgs(validResult));
 				return restResult;
 			}
-			restResult.put("vo", service.get(${classNameFirstLower}GetDTO.getTcRowid()));
+			Map<String, Object> param = restMapper.convertValue(${classNameFirstLower}GetDTO,
+					new TypeReference<Map<String, Object>>()
+			{
+			});
+			restResult.put("row", service.getDynamic(param));
 		}
 		catch(Exception e)
 		{
@@ -166,9 +170,9 @@ public class ${className}Controller extends BaseRestController<${className}>
 			{
 				log.debug("==> requestDto：{}", restMapper.writeValueAsString(${classNameFirstLower}QueryDTO));
 			}
-			Map<String, Object> params = restMapper.convertValue(${classNameFirstLower}QueryDTO, new TypeReference<Map<String, Object>>(){});
-	        restResult.put("total", service.getCount(params));
-	        restResult.put("rows", service.query(params));
+			Map<String, Object> param = restMapper.convertValue(${classNameFirstLower}QueryDTO, new TypeReference<Map<String, Object>>(){});
+	        restResult.put("total", service.getCount(param));
+			restResult.put("rows", service.queryDynamic(param));
 		}
 		catch (Exception e)
 		{

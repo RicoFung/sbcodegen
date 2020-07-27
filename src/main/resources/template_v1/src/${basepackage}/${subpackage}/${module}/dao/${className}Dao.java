@@ -10,7 +10,7 @@ import chok.devwork.springboot.BaseDao;
 import ${basepackage}.${subpkg}.${module}.entity.${className};
 
 @Repository
-public class ${className}Dao extends BaseDao<${className},Long>
+public class ${className}Dao extends BaseDao<${className}, Long>
 {
 	@Resource//(name = "firstSqlSessionTemplate")
 	private SqlSession sqlSession;

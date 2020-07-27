@@ -6,7 +6,6 @@ package ${basepackage}.${subpkg}.${module}.dto;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModel;
