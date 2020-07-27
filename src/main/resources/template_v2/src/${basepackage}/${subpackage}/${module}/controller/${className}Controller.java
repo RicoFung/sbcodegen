@@ -34,7 +34,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "${classNameLowerCase}管理")
 @RestController
-@RequestMapping("/${subpkg}/${classNameLowerCase}")
+@RequestMapping("/${subpackage}/${classNameLowerCase}")
 public class ${className}Controller extends BaseRestController<${className}>
 {
 	private final Logger log = LoggerFactory.getLogger(getClass());
