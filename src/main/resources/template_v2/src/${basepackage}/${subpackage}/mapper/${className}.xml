@@ -148,6 +148,10 @@
 			<#if table.pkCount gte 1>
 			<#list table.compositeIdColumns as column>
     		<if test="@chok.devwork.Ognl@isNotEmpty(${column.columnNameFirstLower})"> AND T.${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> and </#if></if>
+			<if test="@chok.devwork.Ognl@isNotEmpty(${column.columnNameFirstLower}Array)"> 
+				AND T.${column.sqlName} IN
+				<foreach collection="${column.columnNameFirstLower}Array" item="${column.columnNameFirstLower}" index="index" open="(" close=")" separator=","><@mapperEl column.columnNameLower/></foreach>
+			</if>
 			</#list>
 			</#if>  				
 	       	<#list table.notPkColumns as column>
