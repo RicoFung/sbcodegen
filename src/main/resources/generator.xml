@@ -8,7 +8,7 @@
     </comment>  
       
     <entry key="basepackage">com</entry>  
-    <entry key="subpackage">api/v1</entry>
+    <entry key="subpackage">api/v2</entry>
     <entry key="module">tbdemo</entry>
 
     <!-- jsp namespace: web/${namespace}/${className}/list.jsp 

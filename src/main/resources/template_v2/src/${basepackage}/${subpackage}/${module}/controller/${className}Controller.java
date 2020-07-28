@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -28,11 +29,14 @@ import org.springframework.web.multipart.MultipartFile;
 import ${basepackage}.${subpkg}.entity.${className};
 import ${basepackage}.${subpkg}.${module}.dto.${className}AddDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}DelDTO;
+import ${basepackage}.${subpkg}.${module}.dto.${className}ExpDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}GetDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}ImpDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}QueryDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}UpdDTO;
+
 import ${basepackage}.${subpkg}.${module}.service.${className}Service;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import chok.common.RestConstants;
@@ -257,6 +261,52 @@ public class ${className}Controller extends BaseRestController<${className}>
 			restResult.setMsg(e.getMessage());
 		}
 		return restResult;
+	}
+	
+	@ApiOperation("导出")
+	@RequestMapping(value = "/exp", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public void exp(@RequestBody @Validated ${className}ExpDTO ${classNameFirstLower}ExpDTO, BindingResult validResult)
+	{
+		try
+		{
+			if (log.isDebugEnabled())
+			{
+				log.debug("==> requestDto：{}", restMapper.writeValueAsString(${classNameFirstLower}ExpDTO));
+			}
+			if (validResult.hasErrors())
+			{
+				throw new Exception(getValidMsgs(validResult));
+			}
+			// 查询参数
+			Map<String, Object> param = restMapper.convertValue(${classNameFirstLower}ExpDTO,
+					new TypeReference<Map<String, Object>>()
+					{
+					});
+			if (0 < ${classNameFirstLower}ExpDTO.getTcRowids().length)
+			{
+				param.clear();
+				param.put("tcRowidArray", ${classNameFirstLower}ExpDTO.getTcRowids());
+			}
+			// 限制导出数量必须小于1000
+			int count = service.getCount(param);
+			if (1000 < count)
+			{
+				throw new Exception("导出数量不能大于1000条！");
+			}
+			// 查询
+			List<${className}> list = service.queryDynamic(param);
+			// 导出至excel
+			export(list, 
+					${classNameFirstLower}ExpDTO.getShowFilename(),
+					${classNameFirstLower}ExpDTO.getShowTitle(),
+					StringUtils.join(${classNameFirstLower}ExpDTO.getShowAlias(), ","),
+					StringUtils.join(${classNameFirstLower}ExpDTO.getShowColumns(), ","),
+					"xlsx");
+		}
+		catch (Exception e)
+		{
+			log.error("<== Exception：{}", e);
+		}
 	}
 	
 }

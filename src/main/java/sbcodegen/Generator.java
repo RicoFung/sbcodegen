@@ -7,8 +7,8 @@ public class Generator
 	public static void main(String[] args) throws Exception
 	{
 		// 模板地址
-		String templatePath = "C:\\Dev\\projects\\jee\\sbcodegen\\src\\main\\resources\\template_v1";
-//		String templatePath = "C:\\Dev\\projects\\jee\\sbcodegen\\src\\main\\resources\\template_v2";
+//		String templatePath = "C:\\Dev\\projects\\jee\\sbcodegen\\src\\main\\resources\\template_v1";
+		String templatePath = "C:\\Dev\\projects\\jee\\sbcodegen\\src\\main\\resources\\template_v2";
 //		String templatePath = "/Users/ole/Dev/JAVA/Projects/Mine/sbcodegen/src/main/resources/template";
 		GeneratorFacade g = new GeneratorFacade();
 		g.getGenerator().addTemplateRootDir(templatePath);
