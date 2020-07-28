@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -23,18 +21,18 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import ${basepackage}.${subpkg}.entity.${className};
 import ${basepackage}.${subpkg}.${module}.dto.${className}AddDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}DelDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}GetDTO;
+import ${basepackage}.${subpkg}.${module}.dto.${className}ImpDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}QueryDTO;
 import ${basepackage}.${subpkg}.${module}.dto.${className}UpdDTO;
 import ${basepackage}.${subpkg}.${module}.service.${className}Service;
-import ${basepackage}.${subpkg}.entity.${className};
-
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import chok.common.RestConstants;
@@ -220,13 +218,23 @@ public class ${className}Controller extends BaseRestController<${className}>
 	
 	@ApiOperation("上传")
 	@RequestMapping(value = "/imp", method = RequestMethod.POST, consumes = "multipart/*", headers = "content-type=multipart/form-data")
-	public RestResult imp(@ApiParam(value = "上传文件", required = true) @RequestPart("tcFile") @Valid MultipartFile tcFile)
+	public RestResult imp(@RequestParam("file") MultipartFile file, @ApiParam(name="json", value = "{\"param1\":\"1\",\"param2\":\"2\"}") @RequestParam("json") String json)
 	{
+		restResult = new RestResult();
 		try
 		{
+			if (log.isDebugEnabled())
+			{
+				log.debug("==> requestDto：filename={}, json={}", file.getOriginalFilename(), json);
+			}
+			restResult = validImportBefore(file, json, ${className}ImpDTO.class);
+			if (!restResult.isSuccess())
+			{
+				return restResult;
+			}
 //			String tcUuid = UUID.randomUUID().toString();
-			List<TbDemo> impList = new ArrayList<TbDemo>();
-			List<String[]> excelList = POIUtil.readExcel(tcFile, 1);
+			List<${className}> impList = new ArrayList<${className}>();
+			List<String[]> excelList = POIUtil.readExcel(file, 1);
 			// Excel 2 List<T>
 			for(String[] excelRow : excelList)
 			{
