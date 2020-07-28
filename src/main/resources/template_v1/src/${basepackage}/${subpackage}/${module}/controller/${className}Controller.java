@@ -29,6 +29,7 @@ import ${basepackage}.${subpkg}.${module}.entity.${className};
 import ${basepackage}.${subpkg}.${module}.service.${className}Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 
+import chok.common.RestConstants;
 import chok.common.RestResult;
 import chok.devwork.springboot.BaseRestController;
 import io.swagger.annotations.Api;
@@ -59,6 +60,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 			if (validResult.hasErrors()) 
 			{
 				restResult.setSuccess(false);
+				restResult.setCode(RestConstants.ERROR_CODE1);
 				restResult.setMsg(getValidMsgs(validResult));
 				return restResult;
 			}
@@ -70,6 +72,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 		{
 			log.error("<== Exception：{}", e);
 			restResult.setSuccess(false);
+			restResult.setCode(RestConstants.ERROR_CODE1);
 			restResult.setMsg(e.getMessage());
 		}
 		return restResult;
@@ -89,6 +92,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 			if (validResult.hasErrors()) 
 			{
 				restResult.setSuccess(false);
+				restResult.setCode(RestConstants.ERROR_CODE1);
 				restResult.setMsg(getValidMsgs(validResult));
 				return restResult;
 			}
@@ -99,6 +103,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 		{
 			log.error("<== Exception：{}", e);
 			restResult.setSuccess(false);
+			restResult.setCode(RestConstants.ERROR_CODE1);
 			restResult.setMsg(e.getMessage());
 		}
 		return restResult;
@@ -118,6 +123,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 			if (validResult.hasErrors()) 
 			{
 				restResult.setSuccess(false);
+				restResult.setCode(RestConstants.ERROR_CODE1);
 				restResult.setMsg(getValidMsgs(validResult));
 				return restResult;
 			}
@@ -129,6 +135,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 		{
 			log.error("<== Exception：{}", e);
 			restResult.setSuccess(false);
+			restResult.setCode(RestConstants.ERROR_CODE1);
 			restResult.setMsg(e.getMessage());
 		}
 		return restResult;
@@ -148,6 +155,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 			if (validResult.hasErrors()) 
 			{
 				restResult.setSuccess(false);
+				restResult.setCode(RestConstants.ERROR_CODE1);
 				restResult.setMsg(getValidMsgs(validResult));
 				return restResult;
 			}
@@ -161,6 +169,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 		{
 			log.error("<== Exception：{}", e);
 			restResult.setSuccess(false);
+			restResult.setCode(RestConstants.ERROR_CODE1);
 			restResult.setMsg(e.getMessage());
 		}
 		return restResult;
@@ -185,6 +194,7 @@ public class ${className}Controller extends BaseRestController<${className}>
 		{
 			log.error("<== Exception：{}", e);
 			restResult.setSuccess(false);
+			restResult.setCode(RestConstants.ERROR_CODE1);
 			restResult.setMsg(e.getMessage());
 		}
 		return restResult;
