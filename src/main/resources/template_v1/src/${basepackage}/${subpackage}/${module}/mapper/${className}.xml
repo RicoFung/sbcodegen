@@ -19,7 +19,7 @@
       <!-- 自动生成id策略 -->
     <insert id="add" parameterType="${basepackage}.${subpkg}.${module}.entity.${className}">  
        	<selectKey keyProperty="tcRowid" resultType="long" order="BEFORE">
-	         SELECT SEQ_${table.sqlName}.NEXTVAL FROM DUAL
+	         SELECT SEQ_${table.sqlName?substring(3)}.NEXTVAL FROM DUAL
 	     </selectKey>
        	INSERT INTO ${table.sqlName} 
        	(<#list table.columns as column> ${column.sqlName}<#if column_has_next>,</#if></#list>) 
@@ -34,7 +34,7 @@
         ${column.sqlName}<#if column_has_next>,</#if>
         </#list>
         )
-	    SELECT SEQ_${table.sqlName}.NEXTVAL, T.*
+	    SELECT SEQ_${table.sqlName?substring(3)}.NEXTVAL, T.*
         FROM 
         (
 	    <foreach collection ="list" item="item" index="index" separator="UNION ALL">
