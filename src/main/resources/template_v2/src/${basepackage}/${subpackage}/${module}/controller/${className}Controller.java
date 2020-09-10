@@ -265,48 +265,41 @@ public class ${className}Controller extends BaseRestController<${className}>
 	
 	@ApiOperation("导出")
 	@RequestMapping(value = "/exp", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public void exp(@RequestBody @Validated ${className}ExpDTO ${classNameFirstLower}ExpDTO, BindingResult validResult)
+	public void exp(@RequestBody @Validated ${className}ExpDTO ${classNameFirstLower}ExpDTO, BindingResult validResult) throws Exception
 	{
-		try
+		if (log.isDebugEnabled())
 		{
-			if (log.isDebugEnabled())
-			{
-				log.debug("==> requestDto：{}", restMapper.writeValueAsString(${classNameFirstLower}ExpDTO));
-			}
-			if (validResult.hasErrors())
-			{
-				throw new Exception(getValidMsgs(validResult));
-			}
-			// 查询参数
-			Map<String, Object> param = restMapper.convertValue(${classNameFirstLower}ExpDTO,
-					new TypeReference<Map<String, Object>>()
-					{
-					});
-			if (0 < ${classNameFirstLower}ExpDTO.getTcRowids().length)
-			{
-				param.clear();
-				param.put("tcRowidArray", ${classNameFirstLower}ExpDTO.getTcRowids());
-			}
-			// 限制导出数量必须小于1000
-			int count = service.getCount(param);
-			if (1000 < count)
-			{
-				throw new Exception("导出数量不能大于1000条！");
-			}
-			// 查询
-			List<${className}> list = service.queryDynamic(param);
-			// 导出至excel
-			export(list, 
-					${classNameFirstLower}ExpDTO.getShowFilename(),
-					${classNameFirstLower}ExpDTO.getShowTitle(),
-					StringUtils.join(${classNameFirstLower}ExpDTO.getShowAlias(), ","),
-					StringUtils.join(${classNameFirstLower}ExpDTO.getShowColumns(), ","),
-					"xlsx");
+			log.debug("==> requestDto：{}", restMapper.writeValueAsString(${classNameFirstLower}ExpDTO));
 		}
-		catch (Exception e)
+		if (validResult.hasErrors())
 		{
-			log.error("<== Exception：{}", e);
+			throw new Exception(getValidMsgs(validResult));
 		}
+		// 查询参数
+		Map<String, Object> param = restMapper.convertValue(${classNameFirstLower}ExpDTO,
+				new TypeReference<Map<String, Object>>()
+				{
+				});
+		if (0 < ${classNameFirstLower}ExpDTO.getTcRowids().length)
+		{
+			param.clear();
+			param.put("tcRowidArray", ${classNameFirstLower}ExpDTO.getTcRowids());
+		}
+		// 限制导出数量必须小于1000
+		int count = service.getCount(param);
+		if (1000 < count)
+		{
+			throw new Exception("导出数量不能大于1000条！");
+		}
+		// 查询
+		List<${className}> list = service.queryDynamic(param);
+		// 导出至excel
+		export(list, 
+				${classNameFirstLower}ExpDTO.getShowFilename(),
+				${classNameFirstLower}ExpDTO.getShowTitle(),
+				StringUtils.join(${classNameFirstLower}ExpDTO.getShowAlias(), ","),
+				StringUtils.join(${classNameFirstLower}ExpDTO.getShowColumns(), ","),
+				"xlsx");
 	}
 	
 }
