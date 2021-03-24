@@ -37,6 +37,7 @@
     <entry key="jdbc_schema">EPODRP_T</entry>  
     <entry key="jdbc_catalog">EPODRP_T</entry>  
        -->
+
     <!-- 数据库类型映射  -->  
     <entry key="java_typemapping.java.sql.Timestamp">java.lang.String</entry>  
     <entry key="java_typemapping.java.sql.Date">java.lang.String</entry>  
