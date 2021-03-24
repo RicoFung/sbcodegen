@@ -7,36 +7,24 @@
         2.可以引用环境变量: ${env.JAVA_HOME} or System.properties: ${user.home},property之间也可以相互引用  
     </comment>  
       
-    <entry key="basepackage">com.epo</entry>  
-    <entry key="subpackage">admin</entry>
-    <entry key="module">tbdictsubcategory0a</entry>
-<!--       
-    <entry key="basepackage">com</entry>  
-    <entry key="subpackage">admin</entry>
-    <entry key="module">tbtask</entry>
- -->
-    <!-- jsp namespace: web/${namespace}/${className}/list.jsp 
-    <entry key="namespace">view</entry>
-    -->  
-      
+    <!-- 代码生成目录 -->
     <entry key="outRoot">generator-output</entry>
-  
+    
+    <!-- 定义包名，模块名 -->
+    <entry key="basepackage">com.api</entry>  
+    <entry key="subpackage">v1</entry>
+    <entry key="module">tbdemo</entry>
+    
     <!-- 需要移除的表名前缀,使用逗号进行分隔多个前缀,示例值: t_,v_ -->  
     <entry key="tableRemovePrefixes"></entry>  
 
-    <entry key="jdbc_username">epodrp_u</entry>  
-    <entry key="jdbc_password">epodrp_u</entry>  
-<!-- 
-    <entry key="jdbc_username">epodrp_t</entry>  
-    <entry key="jdbc_password">epodrp_t</entry>  
- -->
+	<!-- jdbc账密 -->
+    <entry key="jdbc_username">epoerp_u</entry>  
+    <entry key="jdbc_password">epoerp_u</entry>  
+
     <!-- oracle需要指定jdbc.schema,其它数据库忽略此项配置  -->  
-    <entry key="jdbc_schema">EPODRP_U</entry>  
-    <entry key="jdbc_catalog">EPODRP_U</entry>  
-    <!-- 
-    <entry key="jdbc_schema">EPODRP_T</entry>  
-    <entry key="jdbc_catalog">EPODRP_T</entry>  
-       -->
+    <entry key="jdbc_schema">EPOERP_U</entry>  
+    <entry key="jdbc_catalog">EPOERP_U</entry>  
 
     <!-- 数据库类型映射  -->  
     <entry key="java_typemapping.java.sql.Timestamp">java.lang.String</entry>  
@@ -48,21 +36,21 @@
     <entry key="java_typemapping.java.lang.Short">java.lang.Integer</entry>  
     <entry key="java_typemapping.java.math.BigDecimal">java.lang.Long</entry>  
   
-    <!-- H2 -->  
-    <!-- <entry key="jdbc.url">jdbc:h2:tcp://localhost/test</entry>  
-    <entry key="jdbc.driver">org.h2.Driver</entry>  
-    -->  
-    
-    <!-- MySql 
-    <entry key="jdbc_url">jdbc:mysql://localhost:3306/chok-locks-examples?useUnicode=true</entry>  
-    <entry key="jdbc_driver">com.mysql.jdbc.Driver</entry>  
-    -->
    
     <!-- Oracle  jdbc:oracle:oci:@tnsname_devdb 
     --> 
     <entry key="jdbc_url">jdbc:oracle:thin:@ECNGZVWERP301U.mo-co.org:1521:orcl</entry>  
     <entry key="jdbc_driver">oracle.jdbc.driver.OracleDriver</entry>  
+    
+    <!-- MySql 
+    <entry key="jdbc_url">jdbc:mysql://localhost:3306/chok-locks-examples?useUnicode=true</entry>  
+    <entry key="jdbc_driver">com.mysql.jdbc.Driver</entry>  
+    -->
  
+    <!-- H2 -->  
+    <!-- <entry key="jdbc.url">jdbc:h2:tcp://localhost/test</entry>  
+    <entry key="jdbc.driver">org.h2.Driver</entry>  
+    -->  
       
     <!-- SQLServer2000   
     <entry key="jdbc.url">jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=[database]</entry>  
